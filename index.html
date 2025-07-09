@@ -2,13 +2,249 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github Pages公開練習</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学童おかしアプリ登録</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+        }
+
+        section {
+            position: relative;
+            background-color: #fff;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            margin-top: 12px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            padding-right: 36px;
+            /* ← ここで右側に余白追加（矢印スペース確保） */
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            appearance: none;
+            /* SafariやChromeで独自UIを消す */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.41 0L6 4.58 10.59 0 12 1.41 6 7.41 0 1.41z' fill='%23666'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px 8px;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            margin-top: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button.submit-btn:hover {
+            background-color: #1e7e34;
+        }
+
+        button.add-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            background-color: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button.add-btn:hover {
+            background-color: #005bb5;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            color: #e00;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>こんにちは</h1>
+
+    <h1>学童おかしアプリ登録</h1>
+
+    <section>
+        <div class="section-title">保護者情報</div>
+        <label for="parent-name">保護者氏名（かな）</label>
+        <input id="parent-name" type="text" placeholder="たなか はなこ" />
+
+        <label for="email">メールアドレス</label>
+        <input id="email" type="email" placeholder="example@example.com" />
+
+        <label for="password">パスワード</label>
+        <input id="password" type="password" placeholder="8文字以上" />
+
+        <label for="confirm-password">パスワード確認</label>
+        <input id="confirm-password" type="password" placeholder="もう一度入力" />
+    </section>
+
+    <div id="school-container"></div>
+
+    <button class="add-btn" onclick="addSchool()">+ 学童を追加</button>
+
+    <button type="button" class="submit-btn" onclick="submitForm()">登録する</button>
+
+    <script>
+        let schoolCount = 0;
+        const schoolContainer = document.getElementById('school-container');
+
+        function addSchool() {
+            schoolCount++;
+
+            const section = document.createElement('section');
+            section.className = 'section';
+
+            const sectionTitle = document.createElement('div');
+            sectionTitle.className = 'section-title';
+            sectionTitle.textContent = `利用学童${schoolCount}`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.textContent = '×';
+            removeBtn.onclick = () => {
+                section.remove();
+                updateTitles();
+            };
+
+            const prefectureLabel = document.createElement('label');
+            prefectureLabel.textContent = '都道府県';
+            const prefectureSelect = document.createElement('select');
+            ['東京都', '神奈川県', '千葉県', '埼玉県'].forEach(pref => {
+                const option = document.createElement('option');
+                option.textContent = pref;
+                prefectureSelect.appendChild(option);
+            });
+
+            const cityLabel = document.createElement('label');
+            cityLabel.textContent = '市区町村';
+            const citySelect = document.createElement('select');
+            ['新宿区', '渋谷区', '世田谷区'].forEach(city => {
+                const option = document.createElement('option');
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+
+            const roomLabel = document.createElement('label');
+            roomLabel.textContent = '学童室名';
+            const roomSelect = document.createElement('select');
+            ['さくらんぼ学童', 'にじいろクラブ', 'ひまわりスクール'].forEach(room => {
+                const option = document.createElement('option');
+                option.textContent = room;
+                roomSelect.appendChild(option);
+            });
+
+            const nameLabel = document.createElement('label');
+            nameLabel.textContent = '氏名（かな）';
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'たなか たろう';
+
+            const yearLabel = document.createElement('label');
+            yearLabel.textContent = '入学年度';
+            const yearSelect = document.createElement('select');
+            ['2020年', '2021年', '2022年', '2023年', '2024年', '2025年'].forEach(year => {
+                const option = document.createElement('option');
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+
+            // append all
+            section.appendChild(removeBtn);
+            section.appendChild(sectionTitle);
+            section.appendChild(prefectureLabel);
+            section.appendChild(prefectureSelect);
+            section.appendChild(cityLabel);
+            section.appendChild(citySelect);
+            section.appendChild(roomLabel);
+            section.appendChild(roomSelect);
+            section.appendChild(nameLabel);
+            section.appendChild(nameInput);
+            section.appendChild(yearLabel);
+            section.appendChild(yearSelect);
+
+            schoolContainer.appendChild(section);
+        }
+
+        function updateTitles() {
+            const sections = document.querySelectorAll('#school-container .section');
+            sections.forEach((section, index) => {
+                const title = section.querySelector('.section-title');
+                title.textContent = `利用学童${index + 1}`;
+            });
+            schoolCount = sections.length;
+        }
+
+        function submitForm() {
+            alert('登録しました（仮）');
+        }
+
+        // 初期表示1件
+        addSchool();
+    </script>
 </body>
 
 </html>
